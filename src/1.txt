@@ -1,0 +1,19 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="Test">
+        <p>Ваше имя</p>
+        <input type="text" name="name">
+
+        <p>Ваш возраст</p>
+        <input type="text" name="age">
+        <br>
+        <br>
+
+        <input type="submit" value="Отправить">
+    </form>
+</body>
+</html>

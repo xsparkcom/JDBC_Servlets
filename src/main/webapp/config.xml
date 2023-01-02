@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+    <driver>org.postgresql.Driver</driver>
+    <databaseName>jdbc:postgresql://192.168.31.62:5432/Aston_HomeWork_3</databaseName>
+    <login>sa</login>
+    <password>123</password>
+</config>
