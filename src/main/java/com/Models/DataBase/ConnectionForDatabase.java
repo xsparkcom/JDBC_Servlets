@@ -28,7 +28,7 @@ public class ConnectionForDatabase {
                                         + "application.properties";
 
 
-    public static final String WEB_FILENAME = "/config.xml";
+    public static final String WEB_FILENAME = "/main/resources/application.properties";
     static final String CONFIG_DRIVER = "driver";
     static final String CONFIG_URL_PREFIX = "url_prefix";
     static final String CONFIG_DATABASE_NAME = "databaseName";

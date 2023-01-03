@@ -32,7 +32,8 @@ public class ServletAddresses extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            FileReader reader = new FileReader(getServletContext().getRealPath(ConnectionForDatabase.WEB_FILENAME));
+//            FileReader reader = new FileReader(getServletContext().getRealPath(ConnectionForDatabase.WEB_FILENAME));
+            FileReader reader = new FileReader(ConnectionForDatabase.FILENAME);
             connection = new ConnectionForDatabase(reader);
 
         } catch (FileNotFoundException e) {
