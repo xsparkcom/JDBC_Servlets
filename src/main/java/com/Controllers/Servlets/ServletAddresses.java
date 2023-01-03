@@ -5,13 +5,8 @@ import com.Controllers.Servlets.AddressServices.ServiceDeleteAddresses;
 import com.Controllers.Servlets.AddressServices.ServiceGetAddressByID;
 import com.Controllers.Servlets.AddressServices.ServiceGetAddresses;
 import com.Controllers.Servlets.AddressServices.ServiceInsertAddresses;
-import com.Controllers.Servlets.PersonsServices.ServiceDeletePersons;
-import com.Controllers.Servlets.PersonsServices.ServiceGetPersonByID;
-import com.Controllers.Servlets.PersonsServices.ServiceGetPersons;
-import com.Controllers.Servlets.PersonsServices.ServiceInsertPersons;
 import com.Models.DataBase.ConnectionForDatabase;
 import com.Models.Entities.Address;
-import com.Models.Entities.Person;
 
 import javax.json.Json;
 import javax.json.JsonArray;

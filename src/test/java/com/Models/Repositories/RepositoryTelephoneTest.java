@@ -2,10 +2,8 @@ package com.Models.Repositories;
 
 import com.Debug.InitDatabase;
 import com.Models.DataBase.ConnectionForDatabase;
-import com.Models.Entities.Address;
 import com.Models.Entities.Person;
 import com.Models.Entities.TelephoneNumber;
-import jdk.nashorn.internal.runtime.JSErrorType;
 import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

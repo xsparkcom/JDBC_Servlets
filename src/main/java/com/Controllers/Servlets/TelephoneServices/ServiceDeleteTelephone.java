@@ -1,7 +1,6 @@
 package com.Controllers.Servlets.TelephoneServices;
 
 import com.Models.DataBase.ConnectionForDatabase;
-import com.Models.Repositories.RepositoryAddress;
 import com.Models.Repositories.RepositoryTelephone;
 
 import java.util.ArrayList;

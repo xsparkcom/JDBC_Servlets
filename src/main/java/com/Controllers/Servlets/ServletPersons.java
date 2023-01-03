@@ -33,9 +33,7 @@ import com.Controllers.Servlets.PersonsServices.ServiceGetPersonByID;
 import com.Controllers.Servlets.PersonsServices.ServiceGetPersons;
 import com.Controllers.Servlets.PersonsServices.ServiceInsertPersons;
 import com.Models.DataBase.ConnectionForDatabase;
-import com.Models.Entities.Address;
 import com.Models.Entities.Person;
-import com.Models.Entities.TelephoneNumber;
 
 import javax.json.*;
 import javax.json.stream.JsonParser;
@@ -44,7 +42,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.image.AreaAveragingScaleFilter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;

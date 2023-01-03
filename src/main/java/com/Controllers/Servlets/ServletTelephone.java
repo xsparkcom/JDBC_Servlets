@@ -1,16 +1,11 @@
 package com.Controllers.Servlets;
 
 
-import com.Controllers.Servlets.AddressServices.ServiceGetAddressByID;
-import com.Controllers.Servlets.AddressServices.ServiceGetAddresses;
-import com.Controllers.Servlets.AddressServices.ServiceInsertAddresses;
-import com.Controllers.Servlets.PersonsServices.ServiceDeletePersons;
 import com.Controllers.Servlets.TelephoneServices.ServiceDeleteTelephone;
 import com.Controllers.Servlets.TelephoneServices.ServiceGetTelephoneByID;
 import com.Controllers.Servlets.TelephoneServices.ServiceGetTelephones;
 import com.Controllers.Servlets.TelephoneServices.ServiceInsertTelephone;
 import com.Models.DataBase.ConnectionForDatabase;
-import com.Models.Entities.Address;
 import com.Models.Entities.TelephoneNumber;
 
 import javax.json.Json;

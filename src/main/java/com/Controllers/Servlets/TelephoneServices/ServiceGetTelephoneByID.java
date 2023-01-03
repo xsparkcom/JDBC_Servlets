@@ -1,9 +1,7 @@
 package com.Controllers.Servlets.TelephoneServices;
 
 import com.Models.DataBase.ConnectionForDatabase;
-import com.Models.Entities.Address;
 import com.Models.Entities.TelephoneNumber;
-import com.Models.Repositories.RepositoryAddress;
 import com.Models.Repositories.RepositoryTelephone;
 
 import javax.json.Json;

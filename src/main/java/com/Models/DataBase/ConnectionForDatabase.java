@@ -12,6 +12,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
@@ -21,7 +22,12 @@ import java.util.*;
 
 public class ConnectionForDatabase {
 
-    public static final String FILENAME = "src\\webapp\\config.xml";
+//    public static final String FILENAME = "src\\webapp\\config.xml";
+//public static final String FILENAME = "main/resources/application.properties";
+    public static final String FILENAME = Thread.currentThread().getContextClassLoader().getResource("").getPath()
+                                        + "application.properties";
+
+
     public static final String WEB_FILENAME = "/config.xml";
     static final String CONFIG_DRIVER = "driver";
     static final String CONFIG_URL_PREFIX = "url_prefix";
@@ -58,13 +64,25 @@ public class ConnectionForDatabase {
     public static HashMap<String,String> readConnectionParameters(FileReader reader) throws XPathExpressionException, FileNotFoundException, IOException {
 
         HashMap<String,String> config = new HashMap<>();
-        XPathExpression query = XPathFactory.newInstance().newXPath().compile("/config/*");
-        NodeList listConfig = (NodeList) query.evaluate( new InputSource(reader), XPathConstants.NODESET);
+//        XPathExpression query = XPathFactory.newInstance().newXPath().compile("/config/*");
+//        NodeList listConfig = (NodeList) query.evaluate( new InputSource(reader), XPathConstants.NODESET);
+//
+//        for(int i = 0;i < listConfig.getLength();i++){
+//            config.put(listConfig.item(i).getNodeName(),listConfig.item(i).getTextContent());
+//
+//        }
 
-        for(int i = 0;i < listConfig.getLength();i++){
-            config.put(listConfig.item(i).getNodeName(),listConfig.item(i).getTextContent());
+        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        String appConfigPath = rootPath + "application.properties";
 
-        }
+        Properties appProps = new Properties();
+        appProps.load(new FileReader(appConfigPath));
+
+        config.put("driver", appProps.getProperty("driver"));
+        config.put("databaseName", appProps.getProperty("databaseName"));
+        config.put("login", appProps.getProperty("login"));
+        config.put("password", appProps.getProperty("password"));
+
         reader.close();
         return config;
     }
