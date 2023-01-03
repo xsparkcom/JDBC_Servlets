@@ -1,12 +1,15 @@
 package com.Debug;
 
+
 public class InitDatabase {
 
 
-    public static final String queryText = "DROP TABLE IF EXISTS AddressesOfPersons;\n" +
-            "DROP TABLE IF EXISTS TelephonesOfPersons;\n" +
-            "DROP TABLE IF EXISTS Addresses;\n" +
-            "DROP TABLE IF EXISTS Persons;\n" +
+    public static final String queryText =
+//            "SET SCHEMA public;" +
+            "DROP TABLE IF EXISTS ADDRESSESOFPERSONS;\n" +
+            "DROP TABLE IF EXISTS TELEPHONESOFPERSONS;\n" +
+            "DROP TABLE IF EXISTS ADDRESSES;\n" +
+            "DROP TABLE IF EXISTS PERSONS;\n" +
             "\n" +
             "CREATE TABLE Persons (\n" +
             "   id SERIAL,\n" +

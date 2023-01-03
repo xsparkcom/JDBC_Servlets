@@ -27,6 +27,8 @@ public class RepositoryAddress implements  Repository<Address>{
                 "Addresses;\n";
 
         Set <Address> setOfAddresses = new HashSet<>();
+
+        ConnectionForDatabase.Query query = new ConnectionForDatabase.Query(queryText, null);
         ArrayList<CachedRowSet> resultSet = connection.executeQuery(queryText, null);
 
         try {
@@ -99,13 +101,25 @@ public class RepositoryAddress implements  Repository<Address>{
             }
 
         }
-        queryText = "INSERT \n" +
-                "INTO\n" +
-                "Addresses (id, Address)\n" +
-                "VALUES\n" +
-                "(?, ?)\n" +
-                "ON CONFLICT (id) DO UPDATE \n" +
-                "SET address = excluded.address;\n";
+//        queryText = "INSERT \n" +
+//                "INTO\n" +
+//                "Addresses (id, Address)\n" +
+//                "VALUES\n" +
+//                "(?, ?)\n" +
+//                "ON CONFLICT (id) DO UPDATE \n" +
+//                "SET address = excluded.address;\n";
+
+        queryText =
+        "merge into Addresses \n" +
+        "using (VALUES (?,?)) as Source (id, Address)\n" +
+                "ON Addresses.id = Source.id\n" +
+                "WHEN MATCHED THEN\n" +
+                "UPDATE set address = Source.address\n"+
+                "WHEN NOT MATCHED THEN\n" +
+                "INSERT (id, Address)\n" +
+                "VALUES(Source.id, Source.Address)";
+
+
         arrayListOfParameters.add(address.getId());
         arrayListOfParameters.add(address.getAddress());
 

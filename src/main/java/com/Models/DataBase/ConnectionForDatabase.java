@@ -1,18 +1,12 @@
 package com.Models.DataBase;
 
 
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import javax.sql.RowSet;
+import javax.management.Query;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.FileInputStream;
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
@@ -87,28 +81,28 @@ public class ConnectionForDatabase {
         return config;
     }
 
-    public ArrayList<CachedRowSet> executeQuery(String queryText, ArrayList<Object> listOfParameterOfQuery){
+    public ArrayList<CachedRowSet> executeQuery(ArrayList<Query> queries){
 
         ArrayList<CachedRowSet> list = new ArrayList<CachedRowSet>();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(queryText)){
+        try {
             RowSetFactory factory = RowSetProvider.newFactory();
-
-            if (listOfParameterOfQuery != null) {
-                for (int i = 1; i <= listOfParameterOfQuery.size(); i++) {
-                    if (listOfParameterOfQuery.get(i - 1) instanceof String) {
-                        preparedStatement.setString(i, (String) listOfParameterOfQuery.get(i - 1));
-                    } else if (listOfParameterOfQuery.get(i - 1) instanceof Integer) {
-                        preparedStatement.setInt(i, (Integer) listOfParameterOfQuery.get(i - 1));
-                    }
-                }
-            }
 
             connection.setAutoCommit(false);
 
+            for (Query query : queries) {
+                PreparedStatement preparedStatement = connection.prepareStatement(query.queryText);
 
-            boolean hasResult = preparedStatement.execute();
-            while (hasResult || (preparedStatement.getUpdateCount() != -1)) {
+                if (query.parameters != null) {
+                    for (int i = 1; i <= query.parameters.size(); i++) {
+                        if (query.parameters.get(i - 1) instanceof String) {
+                            preparedStatement.setString(i, (String) query.parameters.get(i - 1));
+                        } else if (query.parameters.get(i - 1) instanceof Integer) {
+                            preparedStatement.setInt(i, (Integer) query.parameters.get(i - 1));
+                        }
+                    }
+                }
+                boolean hasResult = preparedStatement.execute();
                 if (hasResult) {
                     CachedRowSet rowset = factory.createCachedRowSet();
                     rowset.populate(preparedStatement.getResultSet());
@@ -116,14 +110,12 @@ public class ConnectionForDatabase {
                 } else {
 
                 }
-                hasResult = preparedStatement.getMoreResults();
             }
 
             connection.commit();
         } catch (Exception e) {
             if (connection != null) {
                 try {
-//                    System.err.print("Transaction is being rolled back");
                     e.printStackTrace();
                     connection.rollback();
                 } catch (SQLException exception) {
@@ -136,6 +128,15 @@ public class ConnectionForDatabase {
         return list;
     }
 
+    public ArrayList<CachedRowSet> executeQuery(String queryText, ArrayList<Object> parameters){
+
+        ArrayList<Query> queries = new ArrayList<>();
+        queries.add(new Query(queryText, parameters));
+        return executeQuery(queries);
+    }
+
+
+
     public  void close() {
         try {
             connection.close();
@@ -143,4 +144,18 @@ public class ConnectionForDatabase {
             e.printStackTrace();
         }
     }
+
+    public static class Query{
+
+        String queryText;
+        ArrayList<Object> parameters;
+
+        public Query(String queryText, ArrayList<Object> parameters) {
+            this.queryText = queryText;
+            this.parameters = parameters;
+        }
+
+    }
+
+
 }

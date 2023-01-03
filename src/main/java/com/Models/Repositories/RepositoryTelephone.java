@@ -98,12 +98,21 @@ public class RepositoryTelephone implements Repository<TelephoneNumber>{
 
             Integer idMaxAddress = 1;
 
-            queryText += "SELECT MAX (id) + 1 as idMax\n" +
-                    "FROM\n" +
-                    "TelephonesOfPersons;\n" +
-                    "SELECT id FROM Persons WHERE id = ?\n";
+//            queryText += "SELECT MAX (id) + 1 as idMax\n" +
+//                    "FROM\n" +
+//                    "TelephonesOfPersons;\n" +
+//                    "SELECT id FROM Persons WHERE id = ?\n";
+
             arrayListOfParameters.add(telephoneNumber.getPerson().getId());
-            ArrayList<CachedRowSet> resultSet = connection.executeQuery(queryText, arrayListOfParameters);
+            ArrayList<ConnectionForDatabase.Query> queries = new ArrayList<>();
+
+            queries.add(new ConnectionForDatabase.Query( "SELECT MAX (id) + 1 as idMax\n" +
+                    "FROM\n" +
+                    "TelephonesOfPersons;\n", null));
+            queries.add(new ConnectionForDatabase.Query("SELECT id FROM Persons WHERE id = ?\n"  , arrayListOfParameters));
+
+
+            ArrayList<CachedRowSet> resultSet = connection.executeQuery(queries);
             ResultSet telephoneId = resultSet.get(0);
             ResultSet person = resultSet.get(1);
             try {
@@ -125,14 +134,25 @@ public class RepositoryTelephone implements Repository<TelephoneNumber>{
         }
 
         arrayListOfParameters.clear();
-        queryText = "INSERT \n" +
-                "INTO\n" +
-                "TelephonesOfPersons (id, Telephone, Person_id)\n" +
-                "VALUES\n" +
-                "(?, ?, ?)\n" +
-                "ON CONFLICT (id) DO UPDATE \n" +
-                "SET Telephone = excluded.Telephone,\n" +
-                " Person_id = excluded.Person_id\n;\n";
+//        queryText = "INSERT \n" +
+//                "INTO\n" +
+//                "TelephonesOfPersons (id, Telephone, Person_id)\n" +
+//                "VALUES\n" +
+//                "(?, ?, ?)\n" +
+//                "ON CONFLICT (id) DO UPDATE \n" +
+//                "SET Telephone = excluded.Telephone,\n" +
+//                " Person_id = excluded.Person_id\n;\n";
+
+        queryText =
+                "merge into TelephonesOfPersons \n" +
+                        "using (VALUES (?,?,?)) as Source (id, telephone, Person_id)\n" +
+                        "ON TelephonesOfPersons.id = Source.id\n" +
+                        "WHEN MATCHED THEN\n" +
+                        "UPDATE set telephone = Source.telephone, Person_id = Source.Person_id\n"+
+                        "WHEN NOT MATCHED THEN\n" +
+                        "INSERT (id, telephone, Person_id)\n" +
+                        "VALUES(Source.id, Source.telephone, Source.Person_id);";
+        arrayListOfParameters = new ArrayList<>();
         arrayListOfParameters.add(telephoneNumber.getId());
         arrayListOfParameters.add(telephoneNumber.getTelephoneNumber());
         arrayListOfParameters.add(telephoneNumber.getPerson().getId());

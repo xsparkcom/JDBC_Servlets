@@ -1,5 +1,6 @@
 package com.Models.DataBase;
 
+import com.Debug.InitDatabase;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.rowset.CachedRowSet;
@@ -36,16 +37,18 @@ class ConnectionForDatabaseTest {
     @Test
     void executeQuery() {
 
+
         FileReader reader = null;
         try {
-            reader = new FileReader("config.xml");
+            reader = new FileReader(ConnectionForDatabase.FILENAME);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
 
         ConnectionForDatabase connectionForDatabase = new ConnectionForDatabase(reader);
 
-        String queryText = "SELECT * FROM Persons; SELECT * FROM TelephonesOfPersons;";
+//        String queryText = "SELECT * FROM Persons; SELECT * FROM TelephonesOfPersons;";
+        String queryText = InitDatabase.queryText;
 
         ArrayList<CachedRowSet> resultSet = connectionForDatabase.executeQuery(queryText, null);
 

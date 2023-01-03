@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.sql.Connection;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +20,8 @@ class RepositoryAddressTest {
 
     RepositoryAddress repositoryAddress;
     ConnectionForDatabase connectionForDatabase;
+
+
 
     @BeforeEach
     void init(){
@@ -69,7 +72,9 @@ class RepositoryAddressTest {
 
         Address address = new Address(8, "Kiev");
         int id = repositoryAddress.insert(address);
-        assertEquals(id, 8);
+        int quantity = repositoryAddress.getAll().size();
+        assertEquals(quantity, 5);
+//        assertEquals(id, 8);
     }
 
     @Test

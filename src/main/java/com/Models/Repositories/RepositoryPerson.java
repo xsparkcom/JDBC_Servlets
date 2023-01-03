@@ -32,25 +32,30 @@ public class RepositoryPerson implements Repository<Person> {
 
     @Override
     public Set<Person> getAll() {
-        String queryText = "SELECT * \n" +
-                "FROM\n" +
-                "Persons ORDER BY Persons.id;\n" +
+//        String queryText = "SELECT * \n" +
+//                "FROM\n" +
+//                "Persons ORDER BY Persons.id;\n" +
+//
+//                "SELECT * \n" +
+//                "FROM\n" +
+//                "Addresses;\n" +
+//
+//                "SELECT * \n" +
+//                "FROM\n" +
+//                "AddressesOfPersons;\n" +
+//
+//                "SELECT * \n" +
+//                "FROM\n" +
+//                "TelephonesOfPersons;\n";
 
-                "SELECT * \n" +
-                "FROM\n" +
-                "Addresses;\n" +
-
-                "SELECT * \n" +
-                "FROM\n" +
-                "AddressesOfPersons;\n" +
-
-                "SELECT * \n" +
-                "FROM\n" +
-                "TelephonesOfPersons;\n";
-
+        ArrayList<ConnectionForDatabase.Query> queries = new ArrayList<>();
+        queries.add(new ConnectionForDatabase.Query("SELECT * \n FROM\n Persons ORDER BY Persons.id;", null));
+        queries.add(new ConnectionForDatabase.Query("SELECT * \n FROM\n Addresses;\n", null));
+        queries.add(new ConnectionForDatabase.Query("SELECT * \n FROM\n AddressesOfPersons;\n", null));
+        queries.add(new ConnectionForDatabase.Query("SELECT * \n FROM\n TelephonesOfPersons;\n", null));
         Set<Person> setOfPersons = new HashSet<>();
 
-        ArrayList<CachedRowSet> resultSet = connection.executeQuery(queryText, null);
+        ArrayList<CachedRowSet> resultSet = connection.executeQuery(queries);
 
         HashMap<Integer, Address> addresses = new HashMap<>();
         HashMap<Integer, Person> persons = new HashMap<>();
@@ -104,31 +109,49 @@ public class RepositoryPerson implements Repository<Person> {
 
     @Override
     public Person get(int id) {
-        String queryText = "SELECT * \n" +
+//        String queryText = "SELECT * \n" +
+//                "FROM\n" +
+//                "Persons\n" +
+//                "WHERE\n" +
+//                "Persons.id = ?;\n" +
+//
+//                "SELECT * \n" +
+//                "FROM\n" +
+//                "Addresses\n" +
+//                "WHERE Addresses.id in \n" +
+//                "(SELECT Address_id\n" +
+//                "FROM AddressesOfPersons\n" +
+//                "WHERE AddressesOfPersons.Person_id = ?);\n" +
+//
+//                "SELECT * \n" +
+//                "FROM\n" +
+//                "TelephonesOfPersons\n" +
+//                "WHERE TelephonesOfPersons.Person_id = ?\n";
+
+        ArrayList<ConnectionForDatabase.Query> queries = new ArrayList<>();
+
+        ArrayList<Object> arrayListOfParameters = new ArrayList<>();
+        arrayListOfParameters.add(id);
+
+        queries.add(new ConnectionForDatabase.Query("SELECT * \n" +
                 "FROM\n" +
                 "Persons\n" +
                 "WHERE\n" +
-                "Persons.id = ?;\n" +
-
-                "SELECT * \n" +
+                "Persons.id = ?;\n", arrayListOfParameters));
+        queries.add(new ConnectionForDatabase.Query(  "SELECT * \n" +
                 "FROM\n" +
                 "Addresses\n" +
                 "WHERE Addresses.id in \n" +
                 "(SELECT Address_id\n" +
                 "FROM AddressesOfPersons\n" +
-                "WHERE AddressesOfPersons.Person_id = ?);\n" +
-
-                "SELECT * \n" +
+                "WHERE AddressesOfPersons.Person_id = ?);\n", arrayListOfParameters));
+        queries.add(new ConnectionForDatabase.Query("SELECT * \n" +
                 "FROM\n" +
                 "TelephonesOfPersons\n" +
-                "WHERE  TelephonesOfPersons.Person_id = ?\n";
+                "WHERE TelephonesOfPersons.Person_id = ?\n", arrayListOfParameters));
 
-        ArrayList<Object> arrayListOfParameters = new ArrayList<>();
-        arrayListOfParameters.add(id);
-        arrayListOfParameters.add(id);
-        arrayListOfParameters.add(id);
 
-        ArrayList<CachedRowSet> resultSet = connection.executeQuery(queryText, arrayListOfParameters);
+        ArrayList<CachedRowSet> resultSet = connection.executeQuery(queries);
 
         try {
             ResultSet personsResultSet = resultSet.get(0);
@@ -168,16 +191,29 @@ public class RepositoryPerson implements Repository<Person> {
         Integer idMaxAddress = 1;
         Integer idMaxTelephone = 1;
 
-        queryText += "SELECT MAX (id) + 1 as idMax\n" +
+//        queryText += "SELECT MAX (id) + 1 as idMax\n" +
+//                "FROM\n" +
+//                "Persons;\n" +
+//                "SELECT MAX (id) + 1 as idMax\n" +
+//                "FROM\n" +
+//                "TelephonesOfPersons;\n"+
+//                "SELECT MAX (id) + 1 as idMax\n" +
+//                "FROM\n" +
+//                "Addresses;\n";
+
+        ArrayList<ConnectionForDatabase.Query> queries = new ArrayList<>();
+        queries.add(new ConnectionForDatabase.Query("SELECT MAX (id) + 1 as idMax\n" +
                 "FROM\n" +
-                "Persons;\n" +
-                "SELECT MAX (id) + 1 as idMax\n" +
+                "Persons;\n", null));
+        queries.add(new ConnectionForDatabase.Query( "SELECT MAX (id) + 1 as idMax\n" +
                 "FROM\n" +
-                "TelephonesOfPersons;\n"+
-                "SELECT MAX (id) + 1 as idMax\n" +
+                "TelephonesOfPersons;\n" , null));
+        queries.add(new ConnectionForDatabase.Query("SELECT MAX (id) + 1 as idMax\n" +
                 "FROM\n" +
-                "Addresses;\n";
-        ArrayList<CachedRowSet> resultSet = connection.executeQuery(queryText, arrayListOfParameters);
+                "Addresses;\n", null));
+
+
+        ArrayList<CachedRowSet> resultSet = connection.executeQuery(queries);
         ResultSet personId = resultSet.get(0);
 
         try {
@@ -214,50 +250,92 @@ public class RepositoryPerson implements Repository<Person> {
             }
         }
 
-        queryText += "INSERT \n" +
-                "INTO\n" +
-                "Persons (id, Name)\n" +
-                "VALUES\n" +
-                "(?, ?)\n" +
-                "ON CONFLICT (id) DO UPDATE \n" +
-                "SET Name = excluded.Name;\n";
+//        queryText += "INSERT \n" +
+//                "INTO\n" +
+//                "Persons (id, Name)\n" +
+//                "VALUES\n" +
+//                "(?, ?)\n" +
+//                "ON CONFLICT (id) DO UPDATE \n" +
+//                "SET Name = excluded.Name;\n";
+
+        queryText +=
+                "merge into Persons \n" +
+                "using (VALUES (?,?)) as Source (id, Name)\n" +
+                "ON Persons.id = Source.id\n" +
+                "WHEN MATCHED THEN\n" +
+                "UPDATE set Name = Source.Name\n"+
+                "WHEN NOT MATCHED THEN\n" +
+                "INSERT (id, Name)\n" +
+                "VALUES(Source.id, Source.Name);";
+
+
         arrayListOfParameters.add(person.getId());
         arrayListOfParameters.add(person.getName());
 
         for (Address address : person.getAddresses()) {
-            queryText += "INSERT \n" +
-                    "INTO\n" +
-                    "Addresses (id, Address)\n" +
-                    "VALUES\n" +
-                    "(?, ?)\n" +
-                    "ON CONFLICT (id) DO UPDATE\n" +
-                    "SET Address = excluded.Address;\n";
+//            queryText += "INSERT \n" +
+//                    "INTO\n" +
+//                    "Addresses (id, Address)\n" +
+//                    "VALUES\n" +
+//                    "(?, ?)\n" +
+//                    "ON CONFLICT (id) DO UPDATE\n" +
+//                    "SET Address = excluded.Address;\n";
+            queryText +=
+                    "merge into Addresses \n" +
+                            "using (VALUES (?,?)) as Source (id, Address)\n" +
+                            "ON Addresses.id = Source.id\n" +
+                            "WHEN MATCHED THEN\n" +
+                            "UPDATE set address = Source.address\n"+
+                            "WHEN NOT MATCHED THEN\n" +
+                            "INSERT (id, Address)\n" +
+                            "VALUES(Source.id, Source.Address);";
+
+
             arrayListOfParameters.add(address.getId());
             arrayListOfParameters.add(address.getAddress());
 
-            queryText += "INSERT \n" +
-                    "INTO\n" +
-                    "AddressesOfPersons (Person_id, Address_id)\n" +
-                    "VALUES\n" +
-                    "(?, ?)\n" +
-                    "ON CONFLICT (Person_id, Address_id) DO NOTHING;\n";
+//            queryText += "INSERT \n" +
+//                    "INTO\n" +
+//                    "AddressesOfPersons (Person_id, Address_id)\n" +
+//                    "VALUES\n" +
+//                    "(?, ?)\n" +
+//                    "ON CONFLICT (Person_id, Address_id) DO NOTHING;\n";
+            queryText +=
+                    "merge into AddressesOfPersons\n" +
+                            "using (VALUES (?,?)) as Source (Person_id, Address_id)\n" +
+                            "ON AddressesOfPersons.Person_id = Source.Person_id\n" +
+                            "WHEN NOT MATCHED THEN\n" +
+                            "INSERT (Person_id, Address_id)\n" +
+                            "VALUES(Source.Person_id, Source.Address_id);";
+
 
             arrayListOfParameters.add(person.getId());
             arrayListOfParameters.add(address.getId());
         }
 
         for (TelephoneNumber telephoneNumber: person.getTelephoneNumbers()) {
-            queryText += "INSERT \n" +
-                    "INTO\n" +
-                    "TelephonesOfPersons (id, person_id, telephone)\n" +
-                    "VALUES\n" +
-                    "(?, ?, ?)\n" +
-                    "ON CONFLICT (id) DO UPDATE \n" +
-                    "SET Telephone = excluded.Telephone,\n" +
-                    "Person_id = excluded.Person_id;\n";
+//            queryText += "INSERT \n" +
+//                    "INTO\n" +
+//                    "TelephonesOfPersons (id, person_id, telephone)\n" +
+//                    "VALUES\n" +
+//                    "(?, ?, ?)\n" +
+//                    "ON CONFLICT (id) DO UPDATE \n" +
+//                    "SET Telephone = excluded.Telephone,\n" +
+//                    "Person_id = excluded.Person_id;\n";
+            queryText +=
+                    "merge into TelephonesOfPersons \n" +
+                            "using (VALUES (?,?,?)) as Source (id, telephone, Person_id)\n" +
+                            "ON TelephonesOfPersons.id = Source.id\n" +
+                            "WHEN MATCHED THEN\n" +
+                            "UPDATE set telephone = Source.telephone, Person_id = Source.Person_id\n"+
+                            "WHEN NOT MATCHED THEN\n" +
+                            "INSERT (id, telephone, Person_id)\n" +
+                            "VALUES(Source.id, Source.telephone, Source.Person_id);";
+
+
             arrayListOfParameters.add(telephoneNumber.getId());
-            arrayListOfParameters.add(person.getId());
             arrayListOfParameters.add(telephoneNumber.getTelephoneNumber());
+            arrayListOfParameters.add(person.getId());
         }
 
         connection.executeQuery(queryText, arrayListOfParameters);
